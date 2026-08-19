@@ -10,11 +10,21 @@
 
 ## 📸 Project Showcase
 
+### StyleHub application
+
 <p align="center">
-  <img src="docs/screenshots/project-showcase.jpg" alt="StyleHub e-commerce application showcase" width="900" />
+  <img src="https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/screenshots/project-showcase.jpg" alt="StyleHub e-commerce application showcase" width="900" />
 </p>
 
 The running application demonstrates the customer journey from **product discovery → product details → checkout → order history**, backed by independently deployable microservices.
+
+### Checkout flow
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/screenshots/checkout.svg" alt="StyleHub checkout flow" width="700" />
+</p>
+
+The checkout screen is captured from the running Angular storefront and shows the sandbox payment options used by the order/payment flow.
 
 ---
 
@@ -41,7 +51,7 @@ This project demonstrates how a real-world e-commerce system can be split into i
 
 ## 🏗️ Architecture
 
-![E-Commerce Microservices Architecture](docs/architecture/ecommerce-architecture.svg)
+![E-Commerce Microservices Architecture](https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/architecture/ecommerce-architecture.svg)
 
 ### Request and event flow
 
