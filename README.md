@@ -8,6 +8,16 @@
 ![Angular](https://img.shields.io/badge/Frontend-Angular-red)
 ![Docker](https://img.shields.io/badge/Containerized-Docker-blue)
 
+## 📸 Project Showcase
+
+<p align="center">
+  <img src="docs/screenshots/project-showcase.jpg" alt="StyleHub e-commerce application showcase" width="900" />
+</p>
+
+The running application demonstrates the customer journey from **product discovery → product details → checkout → order history**, backed by independently deployable microservices.
+
+---
+
 ## 🚀 What I Built
 
 This project demonstrates how a real-world e-commerce system can be split into independently deployable services. The frontend communicates through a single **API Gateway**, services register with **Eureka**, product images are handled through **AWS S3**, and asynchronous business events are processed with **Kafka**.
@@ -223,25 +233,6 @@ Authorization: Bearer <accessToken>
 ## 🧪 CI/CD
 
 GitHub Actions builds the Angular storefront and backend services independently. The project currently uses automated build/test jobs to catch integration and compilation issues before further deployment work.
-
----
-
-## 📸 Project Screenshots
-
-The recommended showcase screenshots are:
-
-1. Home page
-2. Product listing
-3. Product details
-4. Cart
-5. Address / checkout flow
-6. Orders
-7. Eureka dashboard with services registered as `UP`
-8. GitHub Actions successful workflow
-
-Screenshot capture guide: [docs/README_POLISH.md](docs/README_POLISH.md)
-
-> Use real screenshots from the running project and remove any secrets or personal data before uploading them.
 
 ---
 
