@@ -10,13 +10,11 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 @Configuration
 public class S3Config {
 
-
     private final Region region;
 
-    public S3Config(@Value("${aws.s3.region}") String region) {
+    public S3Config(@Value("${aws.s3.region:ap-south-1}") String region) {
         this.region = Region.of(region);
     }
-
 
     @Bean
     public S3Client s3Client() {
