@@ -1,0 +1,110 @@
+{
+  "info": {
+    "name": "Ecommerce Microservices API",
+    "description": "Run all requests through the API Gateway. Login requests save the access token automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "customerEmail", "value": "customer@example.com" },
+    { "key": "customerPassword", "value": "Password@123" },
+    { "key": "accessToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "productId", "value": "1" },
+    { "key": "brandId", "value": "1" },
+    { "key": "cartItemId", "value": "1" },
+    { "key": "orderId", "value": "1" },
+    { "key": "checkoutReference", "value": "" },
+    { "key": "subCategoryId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Customer\",\n  \"email\": \"{{customerEmail}}\",\n  \"password\": \"{{customerPassword}}\"\n}" },
+            "url": "{{baseUrl}}/api/v1/auth/register"
+          }
+        },
+        {
+          "name": "Login customer",
+          "event": [{ "listen": "test", "script": { "exec": ["const body = pm.response.json();", "pm.collectionVariables.set('accessToken', body.accessToken);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{customerEmail}}\",\n  \"password\": \"{{customerPassword}}\"\n}" },
+            "url": "{{baseUrl}}/api/v1/auth/login"
+          }
+        },
+        { "name": "My profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/v1/auth/me" } },
+        {
+          "name": "Add address",
+          "request": {
+            "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"recipientName\": \"Postman Customer\",\n  \"mobileNumber\": \"9876543210\",\n  \"line1\": \"221B MG Road\",\n  \"line2\": \"Near Metro Station\",\n  \"city\": \"Bengaluru\",\n  \"state\": \"Karnataka\",\n  \"postalCode\": \"560001\",\n  \"country\": \"India\",\n  \"defaultAddress\": true\n}" },
+            "url": "{{baseUrl}}/api/v1/auth/addresses"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalogue",
+      "item": [
+        { "name": "Search catalogue", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products?keyword=shirt&page=0&size=20&sort=price_asc" } },
+        { "name": "Get product", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products/{{productId}}" } },
+        {
+          "name": "Create product (admin)",
+          "request": {
+            "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Oversized Cotton Shirt\",\n  \"sku\": \"MEN-SHIRT-POSTMAN-001\",\n  \"description\": \"Relaxed-fit cotton shirt\",\n  \"subCategoryId\": {{subCategoryId}}\n}" },
+            "url": "{{baseUrl}}/api/v1/products"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart and order",
+      "item": [
+        {
+          "name": "Add item to cart",
+          "request": {
+            "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"productId\": {{productId}},\n  \"brandId\": {{brandId}},\n  \"quantity\": 1\n}" },
+            "url": "{{baseUrl}}/api/v1/carts/items"
+          }
+        },
+        { "name": "View cart", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/v1/carts" } },
+        {
+          "name": "Create order",
+          "event": [{ "listen": "test", "script": { "exec": ["const body = pm.response.json();", "pm.collectionVariables.set('orderId', body.id);", "pm.collectionVariables.set('checkoutReference', body.checkoutReference);"] } }],
+          "request": {
+            "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"shippingAddress\": \"221B MG Road, Bengaluru, Karnataka - 560001\"\n}" },
+            "url": "{{baseUrl}}/api/v1/orders"
+          }
+        },
+        { "name": "Get payment", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/api/v1/payments/orders/{{orderId}}" } },
+        {
+          "name": "Complete sandbox payment",
+          "request": {
+            "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"checkoutReference\": \"{{checkoutReference}}\",\n  \"successful\": true\n}" },
+            "url": "{{baseUrl}}/api/v1/payments/callback"
+          }
+        },
+        {
+          "name": "Advance order status (admin)",
+          "request": {
+            "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"PROCESSING\"\n}" },
+            "url": "{{baseUrl}}/api/v1/orders/{{orderId}}/status"
+          }
+        }
+      ]
+    }
+  ]
+}

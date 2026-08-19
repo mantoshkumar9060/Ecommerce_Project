@@ -1,0 +1,5 @@
+package com.ecommerce.order.entity;
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+@Entity @Table(name="order_items")
+public class OrderItem { @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id; @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="order_id",nullable=false) private Order order; @Column(nullable=false) private Integer productId; @Column(nullable=false) private Integer brandId; @Column(nullable=false) private String productName; @Column(nullable=false,precision=19,scale=2) private BigDecimal unitPrice; @Column(nullable=false) private Integer quantity; public void setOrder(Order v){order=v;} public void setProductId(Integer v){productId=v;} public void setBrandId(Integer v){brandId=v;} public void setProductName(String v){productName=v;} public void setUnitPrice(BigDecimal v){unitPrice=v;} public void setQuantity(Integer v){quantity=v;} public Long getId(){return id;} public Integer getProductId(){return productId;} public Integer getBrandId(){return brandId;} public String getProductName(){return productName;} public BigDecimal getUnitPrice(){return unitPrice;} public Integer getQuantity(){return quantity;} }

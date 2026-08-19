@@ -1,0 +1,3 @@
+package com.ecommerce.order.exception;
+import org.springframework.http.*;import org.springframework.web.bind.annotation.*;import java.time.Instant;
+@RestControllerAdvice public class ApiExceptionHandler{@ExceptionHandler(IllegalArgumentException.class)ResponseEntity<Problem> bad(IllegalArgumentException e){return response(HttpStatus.BAD_REQUEST,e.getMessage());}@ExceptionHandler(IllegalStateException.class)ResponseEntity<Problem> conflict(IllegalStateException e){return response(HttpStatus.CONFLICT,e.getMessage());}private ResponseEntity<Problem> response(HttpStatus s,String m){return ResponseEntity.status(s).body(new Problem(Instant.now(),s.value(),m));}record Problem(Instant timestamp,int status,String message){}}

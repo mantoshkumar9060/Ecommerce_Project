@@ -1,5 +1,36 @@
-**/src/main/resources/application.properties
+# Environment / Secrets
+.env
+**/.env
+.env.*
+!.env.example
 
+# Java / Maven
 target/
+**/target/
+.m2/
+*.jar
+*.war
+
+# IDE
 .idea/
+.vscode/
 *.iml
+
+# Node / Angular
+node_modules/
+**/node_modules/
+.angular/
+**/.angular/
+dist/
+**/dist/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local settings
+maven-settings.local.xml
