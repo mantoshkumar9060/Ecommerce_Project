@@ -1,6 +1,7 @@
 package com.ecommerce.auth.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -52,12 +53,29 @@ public class AppUser {
         passwordHash = v;
     }
 
-    public String getMobileNumber() { return mobileNumber; }
-    public void setMobileNumber(String v) { mobileNumber = v; }
-    public LocalDate getDateOfBirth() { return dateOfBirth; }
-    public void setDateOfBirth(LocalDate v) { dateOfBirth = v; }
-    public String getGender() { return gender; }
-    public void setGender(String v) { gender = v; }
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String v) {
+        mobileNumber = v;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate v) {
+        dateOfBirth = v;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String v) {
+        gender = v;
+    }
 
     public Role getRole() {
         return role;

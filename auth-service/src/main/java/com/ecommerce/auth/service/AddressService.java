@@ -7,6 +7,7 @@ import com.ecommerce.auth.repository.AddressRepository;
 import com.ecommerce.auth.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -25,7 +26,9 @@ public class AddressService {
     }
 
     @Transactional
-    public AuthDtos.Address get(Long userId, Long addressId) { return dto(address(userId, addressId)); }
+    public AuthDtos.Address get(Long userId, Long addressId) {
+        return dto(address(userId, addressId));
+    }
 
     @Transactional
     public AuthDtos.Address create(Long userId, AuthDtos.AddressRequest request) {
@@ -68,15 +71,36 @@ public class AddressService {
         }
     }
 
-    private void clearDefault(List<Address> addresses) { addresses.forEach(address -> address.setDefaultAddress(false)); }
-    private AppUser user(Long userId) { return users.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); }
-    private Address address(Long userId, Long addressId) { return addresses.findByIdAndUserId(addressId, userId).orElseThrow(() -> new IllegalArgumentException("Address not found")); }
+    private void clearDefault(List<Address> addresses) {
+        addresses.forEach(address -> address.setDefaultAddress(false));
+    }
+
+    private AppUser user(Long userId) {
+        return users.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    private Address address(Long userId, Long addressId) {
+        return addresses.findByIdAndUserId(addressId, userId).orElseThrow(() -> new IllegalArgumentException("Address not found"));
+    }
+
     private void copy(AuthDtos.AddressRequest request, Address address) {
-        address.setRecipientName(request.recipientName().trim()); address.setMobileNumber(request.mobileNumber().trim());
-        address.setLine1(request.line1().trim()); address.setLine2(blankToNull(request.line2())); address.setLandmark(blankToNull(request.landmark())); address.setCity(request.city().trim());
-        address.setState(request.state().trim()); address.setPostalCode(request.postalCode().trim()); address.setCountry(request.country().trim());
+        address.setRecipientName(request.recipientName().trim());
+        address.setMobileNumber(request.mobileNumber().trim());
+        address.setLine1(request.line1().trim());
+        address.setLine2(blankToNull(request.line2()));
+        address.setLandmark(blankToNull(request.landmark()));
+        address.setCity(request.city().trim());
+        address.setState(request.state().trim());
+        address.setPostalCode(request.postalCode().trim());
+        address.setCountry(request.country().trim());
         address.setAddressType(request.addressType().trim().toUpperCase());
     }
-    private String blankToNull(String value) { return value == null || value.isBlank() ? null : value.trim(); }
-    private AuthDtos.Address dto(Address address) { return new AuthDtos.Address(address.getId(), address.getRecipientName(), address.getMobileNumber(), address.getLine1(), address.getLine2(), address.getLandmark(), address.getCity(), address.getState(), address.getPostalCode(), address.getCountry(), address.getAddressType(), address.isDefaultAddress()); }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+
+    private AuthDtos.Address dto(Address address) {
+        return new AuthDtos.Address(address.getId(), address.getRecipientName(), address.getMobileNumber(), address.getLine1(), address.getLine2(), address.getLandmark(), address.getCity(), address.getState(), address.getPostalCode(), address.getCountry(), address.getAddressType(), address.isDefaultAddress());
+    }
 }

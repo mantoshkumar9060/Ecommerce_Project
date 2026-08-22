@@ -14,6 +14,8 @@ export interface PaymentDetails { paymentId: number; orderId: number; amount: nu
 export interface Profile { id: number; name: string; email: string; role: string; }
 export interface Address { id: number; recipientName: string; mobileNumber: string; line1: string; line2?: string; landmark?: string; city: string; state: string; postalCode: string; country: string; addressType: 'HOME' | 'WORK' | 'OTHER'; defaultAddress: boolean; }
 export interface AddressRequest { recipientName: string; mobileNumber: string; line1: string; line2?: string; landmark?: string; city: string; state: string; postalCode: string; country: string; addressType: 'HOME' | 'WORK' | 'OTHER'; defaultAddress: boolean; }
+export interface AiProductResult { productId: number; brandId: number; productName: string; brandName: string; category: string; price: number; score: number; }
+export interface AiChatResponse { answer: string; products: AiProductResult[]; }
 
 @Injectable({ providedIn: 'root' })
 export class StoreApiService {
@@ -56,6 +58,7 @@ export class StoreApiService {
   updateAddress(id: number, address: AddressRequest): Observable<Address> { return this.http.put<Address>(`${this.baseUrl}/api/v1/addresses/${id}`, address, this.authOptions()); }
   deleteAddress(id: number): Observable<void> { return this.http.delete<void>(`${this.baseUrl}/api/v1/addresses/${id}`, this.authOptions()); }
   setDefaultAddress(id: number): Observable<Address> { return this.http.patch<Address>(`${this.baseUrl}/api/v1/addresses/${id}/default`, {}, this.authOptions()); }
+  aiChat(question: string, limit = 5): Observable<AiChatResponse> { return this.http.post<AiChatResponse>(`${this.baseUrl}/api/v1/ai/chat`, { question, limit }, this.authOptions()); }
 
   private authOptions() { return { headers: new HttpHeaders({ Authorization: `Bearer ${this.token()?.accessToken ?? ''}` }) }; }
   private saveToken(token: AuthToken): void {

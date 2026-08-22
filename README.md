@@ -182,7 +182,67 @@ Do **not** commit real passwords, JWT secrets, AWS credentials or SMTP credentia
 docker compose up --build -d
 ```
 
+<<<<<<< HEAD
 Check running containers:
+=======
+The API Gateway is available at `http://localhost:8080`, Eureka at
+`http://localhost:8761`, MySQL at `localhost:3306`, and Kafka at `localhost:9092`.
+
+## AI product assistant (RAG)
+
+The independent `ai-service` registers with Eureka on its internal port `9098`. It uses the
+existing `product-service` through Eureka/Feign, creates embeddings with an OpenAI-compatible
+provider, and stores vectors in Qdrant. No existing service calls the AI service.
+
+```text
+Angular assistant -> API Gateway (JWT) -> ai-service
+                                         |-> product-service (catalogue)
+                                         |-> embedding/chat provider
+                                         `-> Qdrant (ecommerce_products)
+```
+
+Qdrant is exposed for local inspection at `http://localhost:6333` (REST) and `6334` (gRPC).
+The collection is created on first ingestion with cosine distance and the configured embedding
+dimension. Product/brand vector IDs are deterministic, so running ingestion again updates the
+same Qdrant points instead of duplicating them.
+
+Set a real provider key in your uncommitted `.env` before ingestion. The defaults target the
+OpenAI-compatible `/v1/embeddings` and `/v1/chat/completions` contracts; another compatible
+provider can be selected with `AI_BASE_URL` and model variables. Never commit `AI_API_KEY`.
+
+```powershell
+Copy-Item .env.example .env
+# Edit .env and set AI_API_KEY=your_real_key
+docker compose up -d --build ai-service qdrant api-gateway storefront
+```
+
+After all services register in Eureka, send one protected ingestion request using a JWT from
+login. Ingestion reads the real paginated product catalogue and indexes active product-brand
+variants, including product name, brand, category, description and price.
+
+```powershell
+$token = '<JWT from /api/v1/auth/login>'
+$headers = @{ Authorization = "Bearer $token"; 'Content-Type' = 'application/json' }
+Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/v1/ai/ingest/products -Headers $headers
+Invoke-RestMethod -Uri http://localhost:8080/api/v1/ai/ingest/status -Headers @{ Authorization = "Bearer $token" }
+Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/v1/ai/search -Headers $headers -Body '{"query":"running shoes under 2000","limit":5}'
+Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/v1/ai/chat -Headers $headers -Body '{"question":"Recommend running shoes under 2000","limit":5}'
+```
+
+Only `GET /api/v1/ai/health` is public. Every other `/api/v1/ai/**` endpoint remains JWT
+protected at the API Gateway. Without `AI_API_KEY`, the service still starts and health remains
+available, while embedding/chat/ingestion requests return a clear `503` configuration error.
+
+The storefront assistant is available from the **Assistant** header action after sign-in. It
+calls `/api/v1/ai/chat`, renders grounded answer text plus product cards, and the cards open the
+catalogue product or add its real product/brand variant to the cart.
+
+3. In each IntelliJ Run Configuration set `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, and optionally `KAFKA_BOOTSTRAP_SERVERS`.
+4. Start: Eureka, Auth, Product, Cart, Payment, Order, Notification, then API Gateway.
+
+For Maven commands, use the included settings file so dependencies are cached inside the
+project rather than an inaccessible or shared global Maven repository:
+>>>>>>> 7f3f803 (feat(ai): implement RAG-based product assistant)
 
 ```powershell
 docker compose ps

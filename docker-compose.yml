@@ -41,6 +41,37 @@ services:
     ports:
       - "8761:8761"
 
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant-data:/qdrant/storage
+
+  ai-service:
+    build: ./ai-service
+    restart: unless-stopped
+    environment:
+      EUREKA_URL: http://eureka-service:8761/eureka/
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-ecommerce_products}
+
+      AI_API_KEY: ${AI_API_KEY:-ollama}
+      AI_BASE_URL: ${AI_BASE_URL:-http://ollama:11434/v1}
+      AI_CHAT_MODEL: ${AI_CHAT_MODEL:-llama3.2:3b}
+      AI_EMBEDDING_MODEL: ${AI_EMBEDDING_MODEL:-nomic-embed-text}
+      AI_EMBEDDING_DIMENSIONS: ${AI_EMBEDDING_DIMENSIONS:-768}
+
+    depends_on:
+      eureka-service:
+        condition: service_started
+      qdrant:
+        condition: service_started
+      ollama:
+        condition: service_started
+
   auth-service:
     build: ./auth-service
     restart: unless-stopped
@@ -155,5 +186,15 @@ services:
       api-gateway:
         condition: service_started
 
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
 volumes:
   mysql-data:
+  qdrant-data:
+  ollama-data:
+

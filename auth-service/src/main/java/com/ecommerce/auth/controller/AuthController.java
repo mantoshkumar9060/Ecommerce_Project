@@ -6,6 +6,7 @@ import com.ecommerce.auth.service.AddressService;
 import jakarta.validation.Valid;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -37,7 +38,7 @@ public class AuthController {
 
     @PatchMapping("/me")
     public AuthDtos.Profile updateProfile(@RequestHeader("X-User-Id") Long userId,
-                                           @Valid @RequestBody AuthDtos.UpdateProfile request) {
+                                          @Valid @RequestBody AuthDtos.UpdateProfile request) {
         return auth.updateProfile(userId, request);
     }
 
@@ -48,16 +49,24 @@ public class AuthController {
 
     @PostMapping("/addresses")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthDtos.Address addAddress(@RequestHeader("X-User-Id") Long userId, @Valid @RequestBody AuthDtos.AddressRequest request) { return addresses.create(userId, request); }
+    public AuthDtos.Address addAddress(@RequestHeader("X-User-Id") Long userId, @Valid @RequestBody AuthDtos.AddressRequest request) {
+        return addresses.create(userId, request);
+    }
 
     @PutMapping("/addresses/{addressId}")
     public AuthDtos.Address updateAddress(@RequestHeader("X-User-Id") Long userId, @PathVariable Long addressId,
-                                          @Valid @RequestBody AuthDtos.AddressRequest request) { return addresses.update(userId, addressId, request); }
+                                          @Valid @RequestBody AuthDtos.AddressRequest request) {
+        return addresses.update(userId, addressId, request);
+    }
 
     @PatchMapping("/addresses/{addressId}/default")
-    public AuthDtos.Address setDefaultAddress(@RequestHeader("X-User-Id") Long userId, @PathVariable Long addressId) { return addresses.setDefault(userId, addressId); }
+    public AuthDtos.Address setDefaultAddress(@RequestHeader("X-User-Id") Long userId, @PathVariable Long addressId) {
+        return addresses.setDefault(userId, addressId);
+    }
 
     @DeleteMapping("/addresses/{addressId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAddress(@RequestHeader("X-User-Id") Long userId, @PathVariable Long addressId) { addresses.delete(userId, addressId); }
+    public void deleteAddress(@RequestHeader("X-User-Id") Long userId, @PathVariable Long addressId) {
+        addresses.delete(userId, addressId);
+    }
 }

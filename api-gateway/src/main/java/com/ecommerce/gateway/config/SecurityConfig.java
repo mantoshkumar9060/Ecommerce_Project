@@ -18,6 +18,10 @@ public class SecurityConfig {
     SecurityFilterChain security(HttpSecurity h, JwtAuthenticationFilter f) throws Exception {
         return h.csrf(c -> c.disable()).cors(c -> {}).sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(a -> a
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/ai/health").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/ai/ingest/products").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/ai/ingest/status").permitAll()
+                .requestMatchers("/api/v1/ai/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasRole("ADMIN")
