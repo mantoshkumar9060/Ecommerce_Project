@@ -1,89 +1,131 @@
-# 🛒 Full-Stack E-Commerce Microservices Platform
-
-> A containerized e-commerce platform built with **Java, Spring Boot, Spring Cloud, Angular, Kafka, MySQL, AWS S3 and Docker**.
-
-![Build](https://img.shields.io/github/actions/workflow/status/mantoshkumar9060/Ecommerce_Project/ci.yml?branch=main&label=CI%2FCD)
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-Microservices-brightgreen)
-![Angular](https://img.shields.io/badge/Frontend-Angular-red)
-![Docker](https://img.shields.io/badge/Containerized-Docker-blue)
-
-## 📸 Project Showcase
-
-### StyleHub application
+# 🛒 StyleHub — Full-Stack E-Commerce Microservices Platform
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/screenshots/project-showcase.jpg" alt="StyleHub e-commerce application showcase" width="900" />
+  <strong>A production-style e-commerce platform built with Spring Boot microservices, Angular, Kafka, JWT, Qdrant RAG, Docker and AWS S3.</strong>
 </p>
 
-The running application demonstrates the customer journey from **product discovery → product details → checkout → order history**, backed by independently deployable microservices.
+<p align="center">
+  <a href="http://localhost:4200">🛍️ Run the Storefront</a> •
+  <a href="http://localhost:8080">🚪 API Gateway</a> •
+  <a href="http://localhost:8761">🔎 Eureka</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17-orange?logo=openjdk" alt="Java 17" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.0-brightgreen?logo=springboot" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/Angular-Frontend-red?logo=angular" alt="Angular" />
+  <img src="https://img.shields.io/badge/Kafka-Event%20Driven-black?logo=apachekafka" alt="Kafka" />
+  <img src="https://img.shields.io/badge/Docker-Containerized-blue?logo=docker" alt="Docker" />
+  <img src="https://img.shields.io/badge/RAG-Qdrant-purple" alt="RAG" />
+  <img src="https://img.shields.io/badge/Tests-48%20passing-success" alt="48 passing tests" />
+</p>
+
+## ✨ Why this project is interesting
+
+StyleHub is not a single Spring Boot application. It is a **full-stack, containerized, event-driven e-commerce system** designed to demonstrate how independently deployable services work together behind a single API Gateway.
+
+The platform includes:
+
+- 🔐 JWT authentication with role-based authorization
+- 🚪 API Gateway with centralized routing and security
+- 🧭 Eureka service discovery
+- 🛍️ Product catalogue with categories, brands, sizes and images
+- ☁️ AWS S3 product media integration
+- 🛒 Per-user cart with product-price snapshots
+- 📦 Order lifecycle and payment state management
+- 💳 Payment workflow with idempotency-oriented handling
+- 📨 Kafka-based asynchronous payment/notification events
+- 🤖 AI shopping assistant using RAG + embeddings + Qdrant
+- 🎨 Angular storefront with product discovery, cart and checkout flows
+- 🐳 Docker Compose local orchestration
+- 🧪 JUnit 5 + Mockito test coverage across the core services
+- 🔄 GitHub-based development workflow
+
+---
+
+## 📸 Product Showcase
+
+### StyleHub storefront
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/screenshots/project-showcase.jpg" alt="StyleHub e-commerce application showcase" width="920" />
+</p>
 
 ### Checkout flow
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/screenshots/checkout.svg" alt="StyleHub checkout flow" width="700" />
+  <img src="https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/screenshots/checkout.svg" alt="StyleHub checkout flow" width="760" />
 </p>
-
-The checkout screen is captured from the running Angular storefront and shows the sandbox payment options used by the order/payment flow.
 
 ---
 
-## 🚀 What I Built
+## 🧠 AI Shopping Assistant (RAG)
 
-This project demonstrates how a real-world e-commerce system can be split into independently deployable services. The frontend communicates through a single **API Gateway**, services register with **Eureka**, product images are handled through **AWS S3**, and asynchronous business events are processed with **Kafka**.
+The **StyleHub AI Assistant** lets customers ask natural-language shopping questions such as:
 
-### Key capabilities
+> “Puma shoes under ₹3000”
 
-- JWT-based authentication and protected APIs
-- API Gateway routing and centralized entry point
-- Eureka service discovery
-- Product catalog, categories, brands, sizes and images
-- AWS S3-based product image handling
-- User cart and product-price snapshot handling
-- Order creation and order-state tracking
-- Payment callback flow
-- Kafka-based asynchronous payment/notification events
-- Notification service for event consumption and email/console delivery
-- Docker Compose orchestration
-- GitHub Actions CI builds for backend services and Angular storefront
+> “Show Nike shoes under ₹5000”
+
+The AI flow retrieves catalogue context from the real product service, performs semantic search against Qdrant vectors, applies structured filters such as brand/category/budget, and generates a concise grounded response.
+
+```text
+Customer
+   ↓
+Angular Assistant
+   ↓
+API Gateway + JWT
+   ↓
+ai-service
+   ├── Product Service → live catalogue
+   ├── Embedding / Chat model
+   └── Qdrant → vector retrieval
+```
+
+Security model:
+
+| Endpoint | Access |
+|---|---|
+| `GET /api/v1/ai/health` | Public |
+| `POST /api/v1/ai/chat` | Authenticated |
+| `POST /api/v1/ai/search` | Authenticated |
+| `POST /api/v1/ai/ingest/products` | Admin only |
+| `GET /api/v1/ai/ingest/status` | Admin only |
 
 ---
 
 ## 🏗️ Architecture
 
-![E-Commerce Microservices Architecture](https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/architecture/ecommerce-architecture.svg)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mantoshkumar9060/Ecommerce_Project/main/docs/architecture/ecommerce-architecture.svg" alt="StyleHub microservices architecture" width="1100" />
+</p>
 
-### Request and event flow
+### Request flow
 
 ```text
 Angular Storefront
-        |
-        v
+        │
+        ▼
    API Gateway
-        |
-        +--> Auth Service ---------> MySQL
-        +--> Product Service ------> MySQL / AWS S3
-        +--> Cart Service ---------> MySQL
-        +--> Order Service --------> MySQL
-        +--> Payment Service ------> Payment callback
-        |
-        v
-     Eureka Server
-   (service discovery)
+        │
+        ├── Auth Service ───────► MySQL
+        ├── Product Service ────► MySQL / AWS S3
+        ├── Cart Service ───────► MySQL
+        ├── Order Service ──────► MySQL
+        └── Payment Service ────► MySQL
 
-Payment completed event
-        |
-        v
-      Kafka Topic
-      /         \
-     v           v
-Order Service   Notification Service
+               Eureka
+            Service Discovery
+
+Payment completed
+       │
+       ▼
+     Kafka
+      ├──────────────► Order Service
+      └──────────────► Notification Service
 ```
 
-**Communication model:**
-- REST for synchronous client/service operations
-- Eureka for service discovery
-- Kafka for asynchronous event-driven processing
+**Communication:** REST for synchronous operations, Eureka for discovery, Kafka for asynchronous events.
 
 ---
 
@@ -92,22 +134,24 @@ Order Service   Notification Service
 | Service | Port | Responsibility |
 |---|---:|---|
 | Eureka | 8761 | Service discovery |
-| API Gateway | 8080 | Single entry point, routing and security |
-| Auth Service | 9091 | Registration, login, BCrypt passwords and JWT issuance |
-| Product Service | 9093 | Catalog, brands, categories, sizes and AWS S3 image handling |
-| Cart Service | 9094 | Per-user cart and product-price snapshot |
-| Order Service | 9095 | Order snapshots and payment state |
-| Payment Service | 9096 | Payment intent and callback entry point |
-| Notification Service | 9097 | Kafka consumer and notification delivery |
-| Storefront | 4200 | Angular customer UI |
+| API Gateway | 8080 | Routing, JWT validation, authorization |
+| Auth Service | 9091 | Registration, login, BCrypt, JWT issuance, addresses |
+| Product Service | 9093 | Catalogue, categories, brands, sizes, product images |
+| Cart Service | 9094 | User cart and price snapshots |
+| Order Service | 9095 | Order creation and state transitions |
+| Payment Service | 9096 | Payment state and callback flow |
+| Notification Service | 9097 | Kafka event consumption and notification delivery |
+| AI Service | 9098 | RAG search and AI shopping assistant |
+| Storefront | 4200 | Angular customer application |
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend
+
 - Java 17
-- Spring Boot
+- Spring Boot 4
 - Spring Cloud
 - Spring Security
 - Spring Data JPA / Hibernate
@@ -116,65 +160,122 @@ Order Service   Notification Service
 - OpenFeign
 
 ### Frontend
+
 - Angular
 - TypeScript
 - HTML / SCSS
 
 ### Data & Messaging
-- MySQL
+
+- MySQL 8
 - Apache Kafka
+- Qdrant
 
 ### Cloud & DevOps
+
 - AWS S3
 - Docker / Docker Compose
+- GitHub
 - GitHub Actions
 - Maven
-- Git
+
+### AI
+
+- Retrieval-Augmented Generation (RAG)
+- Vector embeddings
+- Qdrant semantic search
+- OpenAI-compatible / Ollama model interface
+
+---
+
+## 🧪 Testing
+
+The repository includes focused unit/controller tests using **JUnit 5 + Mockito**.
+
+Current test coverage includes the AI service plus the core business microservices:
+
+```text
+AI Service               11 tests
+Auth Service              9 tests
+Cart Service              4 tests
+Order Service             5 tests
+Payment Service           5 tests
+Notification Service     3 tests
+API Gateway               2 tests
+Product Service           9 tests
+─────────────────────────────────
+Total                    48 tests
+```
+
+The tests focus on meaningful business behavior such as authentication failures, cart rules, order ownership/state transitions, payment idempotency, notification handling, JWT validation and product/category logic.
+
+Run service tests with Maven:
+
+```powershell
+cd <service-directory>
+mvn test
+```
+
+For the Angular storefront:
+
+```powershell
+cd storefront
+npm.cmd run build
+```
 
 ---
 
 ## 🔐 Security
 
-The platform uses JWT-based authentication. After login, the client receives an access token and sends it with protected requests:
+JWT access tokens are issued by the Auth Service and validated by the API Gateway.
 
 ```http
 Authorization: Bearer <accessToken>
 ```
 
-Passwords are stored using BCrypt hashing. Secrets and environment-specific credentials should remain outside Git through environment variables and `.env` files.
+Passwords are stored using BCrypt. Secrets, credentials and environment-specific values should stay outside Git using `.env` / environment variables.
+
+Current gateway rules include:
+
+- Public login/register
+- Public product read APIs
+- Authenticated customer operations
+- Admin-only product management
+- Admin-only AI ingestion
+- Public AI health endpoint
+- Stateless JWT authentication
+- Explicit `401` vs `403` handling
 
 ---
 
-## ☁️ AWS S3 Integration
+## ☁️ AWS S3
 
-The Product Service configures:
+Product media is stored outside the application database through AWS S3 integration.
 
-- `S3Client` for S3 operations
-- `S3Presigner` for pre-signed URL generation
-- Configurable AWS region through application properties
+The Product Service uses:
 
-This keeps image storage separate from application containers and supports scalable product media handling.
+- `S3Client` for object operations
+- `S3Presigner` for signed access
+- Configurable AWS region and credentials
 
 ---
 
 ## 🐳 Run Locally
 
-### 1. Clone the repository
+### 1. Clone
 
 ```bash
 git clone https://github.com/mantoshkumar9060/Ecommerce_Project.git
 cd Ecommerce_Project
 ```
 
-### 2. Configure environment values
-
-Copy the example environment file and provide local values:
+### 2. Configure environment
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Do **not** commit real passwords, JWT secrets, AWS credentials or SMTP credentials.
+Do **not** commit real database passwords, JWT secrets, AWS keys, SMTP credentials or AI provider keys.
 
 ### 3. Start the stack
 
@@ -182,85 +283,26 @@ Do **not** commit real passwords, JWT secrets, AWS credentials or SMTP credentia
 docker compose up --build -d
 ```
 
-<<<<<<< HEAD
-Check running containers:
-=======
-The API Gateway is available at `http://localhost:8080`, Eureka at
-`http://localhost:8761`, MySQL at `localhost:3306`, and Kafka at `localhost:9092`.
-
-## AI product assistant (RAG)
-
-The independent `ai-service` registers with Eureka on its internal port `9098`. It uses the
-existing `product-service` through Eureka/Feign, creates embeddings with an OpenAI-compatible
-provider, and stores vectors in Qdrant. No existing service calls the AI service.
-
-```text
-Angular assistant -> API Gateway (JWT) -> ai-service
-                                         |-> product-service (catalogue)
-                                         |-> embedding/chat provider
-                                         `-> Qdrant (ecommerce_products)
-```
-
-Qdrant is exposed for local inspection at `http://localhost:6333` (REST) and `6334` (gRPC).
-The collection is created on first ingestion with cosine distance and the configured embedding
-dimension. Product/brand vector IDs are deterministic, so running ingestion again updates the
-same Qdrant points instead of duplicating them.
-
-Set a real provider key in your uncommitted `.env` before ingestion. The defaults target the
-OpenAI-compatible `/v1/embeddings` and `/v1/chat/completions` contracts; another compatible
-provider can be selected with `AI_BASE_URL` and model variables. Never commit `AI_API_KEY`.
-
-```powershell
-Copy-Item .env.example .env
-# Edit .env and set AI_API_KEY=your_real_key
-docker compose up -d --build ai-service qdrant api-gateway storefront
-```
-
-After all services register in Eureka, send one protected ingestion request using a JWT from
-login. Ingestion reads the real paginated product catalogue and indexes active product-brand
-variants, including product name, brand, category, description and price.
-
-```powershell
-$token = '<JWT from /api/v1/auth/login>'
-$headers = @{ Authorization = "Bearer $token"; 'Content-Type' = 'application/json' }
-Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/v1/ai/ingest/products -Headers $headers
-Invoke-RestMethod -Uri http://localhost:8080/api/v1/ai/ingest/status -Headers @{ Authorization = "Bearer $token" }
-Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/v1/ai/search -Headers $headers -Body '{"query":"running shoes under 2000","limit":5}'
-Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/v1/ai/chat -Headers $headers -Body '{"question":"Recommend running shoes under 2000","limit":5}'
-```
-
-Only `GET /api/v1/ai/health` is public. Every other `/api/v1/ai/**` endpoint remains JWT
-protected at the API Gateway. Without `AI_API_KEY`, the service still starts and health remains
-available, while embedding/chat/ingestion requests return a clear `503` configuration error.
-
-The storefront assistant is available from the **Assistant** header action after sign-in. It
-calls `/api/v1/ai/chat`, renders grounded answer text plus product cards, and the cards open the
-catalogue product or add its real product/brand variant to the cart.
-
-3. In each IntelliJ Run Configuration set `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, and optionally `KAFKA_BOOTSTRAP_SERVERS`.
-4. Start: Eureka, Auth, Product, Cart, Payment, Order, Notification, then API Gateway.
-
-For Maven commands, use the included settings file so dependencies are cached inside the
-project rather than an inaccessible or shared global Maven repository:
->>>>>>> 7f3f803 (feat(ai): implement RAG-based product assistant)
+Check containers:
 
 ```powershell
 docker compose ps
 ```
 
-### 4. Access the application
+### 4. Open the application
 
 | Component | URL |
 |---|---|
-| Storefront | http://localhost:4200 |
-| API Gateway | http://localhost:8080 |
-| Eureka Dashboard | http://localhost:8761 |
-| MySQL | localhost:3306 |
-| Kafka | localhost:9092 |
+| 🛍️ Storefront | http://localhost:4200 |
+| 🚪 API Gateway | http://localhost:8080 |
+| 🔎 Eureka | http://localhost:8761 |
+| 🧠 Qdrant | http://localhost:6333 |
+| 📨 Kafka | localhost:9092 |
+| 🗄️ MySQL | localhost:3306 |
 
 ---
 
-## 📡 API Examples
+## 📡 Example API Calls
 
 ### Register
 
@@ -278,43 +320,63 @@ POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 ```
 
-Login returns an access token for protected requests.
-
-### Add cart item
+### Product catalogue
 
 ```http
-POST http://localhost:8080/api/v1/carts/items
-Authorization: Bearer <accessToken>
-
-{"productId":1,"brandId":1,"quantity":2}
+GET http://localhost:8080/api/v1/products?page=0&size=20
 ```
 
-### Create order
+### AI search
 
 ```http
-POST http://localhost:8080/api/v1/orders
+POST http://localhost:8080/api/v1/ai/search
 Authorization: Bearer <accessToken>
+Content-Type: application/json
 
-{"shippingAddress":"Delhi, India - 110001"}
+{"query":"Puma shoes under 3000","limit":5}
+```
+
+### AI chat
+
+```http
+POST http://localhost:8080/api/v1/ai/chat
+Authorization: Bearer <accessToken>
+Content-Type: application/json
+
+{"question":"Recommend Puma shoes under 3000","limit":5}
 ```
 
 ---
 
-## 🧪 CI/CD
+## 🔄 CI/CD
 
-GitHub Actions builds the Angular storefront and backend services independently. The project currently uses automated build/test jobs to catch integration and compilation issues before further deployment work.
+The repository is structured for GitHub-based development and automated build/test workflows. The project uses Maven for backend services and Angular CLI for the storefront.
 
 ---
 
-## 🔮 Next Improvements
+## 🗺️ Roadmap
 
-- Inventory reservation and compensating actions for failed payments
-- Provider-grade payment webhook signature verification
-- Distributed tracing and centralized observability
-- Redis caching where appropriate
-- Integration tests with containers
-- Production secret management
-- Deployment to a cloud environment
+### Completed
+
+- [x] Microservices architecture
+- [x] API Gateway + Eureka
+- [x] JWT security
+- [x] Kafka event flow
+- [x] AWS S3 integration
+- [x] Angular storefront
+- [x] RAG-based AI shopping assistant
+- [x] JUnit 5 + Mockito test coverage
+- [x] Gateway security hardening
+
+### Next
+
+- [ ] Redis caching for high-read catalogue endpoints
+- [ ] Cache invalidation tests
+- [ ] Kafka retry + dead-letter handling
+- [ ] Prometheus + Grafana observability
+- [ ] Integration tests with containers
+- [ ] Production secret management
+- [ ] Cloud deployment
 
 ---
 
@@ -324,4 +386,4 @@ GitHub Actions builds the Angular storefront and backend services independently.
 
 GitHub: https://github.com/mantoshkumar9060
 
-If this project is useful, consider starring the repository.
+⭐ If you find the project useful, consider starring the repository.
