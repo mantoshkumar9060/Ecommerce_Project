@@ -105,7 +105,7 @@ export class App {
 
   protected search(): void {
     this.loading.set(true);
-    this.api.search(this.query).subscribe({
+    this.api.products(0, 100).subscribe({
       next: result => {
         this.products.set(result.data ?? []);
         this.loading.set(false);
