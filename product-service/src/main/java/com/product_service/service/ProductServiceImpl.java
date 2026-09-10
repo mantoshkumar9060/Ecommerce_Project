@@ -3,6 +3,7 @@ import com.product_service.dto.ImageDto;
 import com.product_service.dto.ProductDto;
 import com.product_service.dto.ProductBrandSnapshot;
 import com.product_service.entity.Brand;
+import com.product_service.entity.Brand;
 import com.product_service.entity.Image;
 import com.product_service.entity.Product;
 import com.product_service.mapper.ProductMapper;
@@ -10,6 +11,9 @@ import com.product_service.repository.ImageRepository;
 import com.product_service.repository.ProductRepository;
 import com.product_service.repository.SubCategoryRepository;
 import com.product_service.dto.ProductManagementDtos;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -101,6 +105,10 @@ public class ProductServiceImpl implements ProductService {
         return ProductMapper.convertProductToDto(productRepository.save(product));
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "products", key = "#productId"),
+        @CacheEvict(value = "product_snapshots", allEntries = true)
+    })
     @Transactional
     @Override
     public ProductDto updateProduct(Integer productId, ProductManagementDtos.Update request) {
@@ -111,10 +119,15 @@ public class ProductServiceImpl implements ProductService {
         return ProductMapper.convertProductToDto(product);
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "products", key = "#productId"),
+        @CacheEvict(value = "product_snapshots", allEntries = true)
+    })
     @Transactional
     @Override
     public void deactivateProduct(Integer productId) { product(productId).setActive(false); }
 
+    @Cacheable(value = "products", key = "#productId", sync = true)
     @Transactional(readOnly = true)
     @Override
     public ProductDto getProduct(Integer productId) {
@@ -134,6 +147,7 @@ public class ProductServiceImpl implements ProductService {
         catch (NumberFormatException exception) { return 0; }
     }
 
+    @Cacheable(value = "product_snapshots", key = "#productId + '_' + #brandId", sync = true)
     @Transactional(readOnly = true)
     @Override
     public ProductBrandSnapshot getProductBrandSnapshot(Integer productId, Integer brandId) {

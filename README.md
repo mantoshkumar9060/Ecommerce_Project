@@ -283,13 +283,13 @@ Do **not** commit real database passwords, JWT secrets, AWS keys, SMTP credentia
 docker compose up --build -d
 ```
 
-Check containers:
+Check running containers:
 
 ```powershell
 docker compose ps
 ```
 
-### 4. Open the application
+### 4. Access the application
 
 | Component | URL |
 |---|---|
@@ -297,6 +297,7 @@ docker compose ps
 | 🚪 API Gateway | http://localhost:8080 |
 | 🔎 Eureka | http://localhost:8761 |
 | 🧠 Qdrant | http://localhost:6333 |
+| ⚡ Redis | localhost:6379 |
 | 📨 Kafka | localhost:9092 |
 | 🗄️ MySQL | localhost:3306 |
 

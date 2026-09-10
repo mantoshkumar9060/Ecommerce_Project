@@ -11,7 +11,7 @@ public class SecurityConfig {
     SecurityFilterChain security(HttpSecurity h) throws Exception {
         return h.csrf(c -> c.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a -> a.requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/actuator/health", "/actuator/info").permitAll().anyRequest().denyAll())
+                .authorizeHttpRequests(a -> a.requestMatchers("/api/v1/auth/**", "/actuator/**", "/error").permitAll().anyRequest().denyAll())
                 .build();
     }
 }

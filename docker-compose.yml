@@ -41,6 +41,18 @@ services:
     ports:
       - "8761:8761"
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   qdrant:
     image: qdrant/qdrant
     ports:
@@ -93,11 +105,15 @@ services:
     environment:
       <<: *service-environment
       PRODUCT_DB_URL: jdbc:mysql://mysql:3306/product_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       mysql:
         condition: service_healthy
       eureka-service:
         condition: service_started
+      redis:
+        condition: service_healthy
 
   cart-service:
     build: ./cart-service
@@ -197,4 +213,5 @@ volumes:
   mysql-data:
   qdrant-data:
   ollama-data:
+  redis-data:
 

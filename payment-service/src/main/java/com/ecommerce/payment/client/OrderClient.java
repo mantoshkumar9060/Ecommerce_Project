@@ -1,1 +1,0 @@
-package com.ecommerce.payment.client;import org.springframework.cloud.openfeign.FeignClient;import org.springframework.web.bind.annotation.*;@FeignClient(name="order-service",path="/internal/orders")public interface OrderClient{@PatchMapping("/{orderId}/payment-status")void update(@PathVariable Long orderId,@RequestParam boolean successful);}
